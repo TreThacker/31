@@ -2389,11 +2389,14 @@ function scaleGameToWindow() {
   const scale = Math.min(widthScale, heightScale);
 
   const scaledWidth = baseWidth * scale;
+  const scaledHeight = baseHeight * scale;
+
   const offsetX = (availableWidth - scaledWidth) / 2;
+  const offsetY = (availableHeight - scaledHeight) / 2;
 
   dom.gameScaleInner.style.width = `${baseWidth}px`;
   dom.gameScaleInner.style.transform =
-    `translateX(${offsetX}px) scale(${scale})`;
+    `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
 
   dom.gameScaleFrame.style.height =
     `${window.innerHeight}px`;
