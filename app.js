@@ -2328,19 +2328,28 @@ const dom = {
 /* <------------------------------------------------
       GAME AUTO SCALE SYSTEM
    -------------------------------------------------> */
-    function scaleGameToWindow() {
-      const baseWidth = 1440;
-      const baseHeight = dom.gameScaleInner.scrollHeight;
-      const availableWidth = window.innerWidth;
-      const availableHeight = window.innerHeight;
-      const scale = Math.min(1, availableWidth / baseWidth, availableHeight / baseHeight);
-      const scaledWidth = baseWidth * scale;
-      const offsetX = Math.max(0, (availableWidth - scaledWidth) / 2);
+function scaleGameToWindow() {
+  const baseWidth = 1440;
+  const baseHeight = dom.gameScaleInner.scrollHeight;
 
-      dom.gameScaleInner.style.width = `${baseWidth}px`;
-      dom.gameScaleInner.style.transform = `translateX(${offsetX}px) scale(${scale})`;
-      dom.gameScaleFrame.style.height = `${window.innerHeight}px`;
-    }
+  const availableWidth = window.innerWidth;
+  const availableHeight = window.innerHeight;
+
+  const widthScale = availableWidth / baseWidth;
+  const heightScale = availableHeight / baseHeight;
+
+  const scale = Math.min(widthScale, heightScale);
+
+  const scaledWidth = baseWidth * scale;
+  const offsetX = (availableWidth - scaledWidth) / 2;
+
+  dom.gameScaleInner.style.width = `${baseWidth}px`;
+  dom.gameScaleInner.style.transform =
+    `translateX(${offsetX}px) scale(${scale})`;
+
+  dom.gameScaleFrame.style.height =
+    `${window.innerHeight}px`;
+}
 
 /* <------------------------------------------------
     INITIAL RENDER
