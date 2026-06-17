@@ -153,6 +153,41 @@ body,
 			pointer-events: none;
 		}
 		
+/* <------------------------------------------------
+      GAME LOG TOGGLE BUTTON
+   -------------------------------------------------> */
+		.game-log-toggle-btn {
+			position: absolute;
+			top: 18px;
+			right: 18px;
+			z-index: 20;
+			display: none;
+			width: 42px;
+			height: 42px;
+			padding: 0;
+			border-radius: 50%;
+			color: var(--text);
+			background: rgba(0,0,0,0.42);
+			border: 2px solid rgba(255,255,255,0.72);
+			font-size: 2rem;
+			font-weight: 1000;
+			line-height: 1;
+			box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+		}
+
+		.app.game-log-toggle-ready .game-log-toggle-btn {
+			display: grid;
+			place-items: center;
+		}
+
+		.app.game-log-hidden .layout {
+			grid-template-columns: 1fr;
+		}
+
+		.app.game-log-hidden .side-panel {
+			display: none;
+		}		
+		
 		body.theme-classic .table-title {
 			color: #8ff0b3;
 			text-shadow:

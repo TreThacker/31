@@ -15,6 +15,7 @@ const APP_DEDICATION = '';
 	 
 const dom = {
       body: document.body,
+      app: document.getElementById('app'),
       gameScaleFrame: document.getElementById('gameScaleFrame'),
       gameScaleInner: document.getElementById('gameScaleInner'),
       themeSelect: document.getElementById('themeSelect'),
@@ -72,7 +73,8 @@ const dom = {
       nextRoundBtn: document.getElementById('nextRoundBtn'),
       toast: document.getElementById('toast'),
       achievementToast: document.getElementById('achievementToast'),
-      turboStatusToast: document.getElementById('turboStatusToast')
+      turboStatusToast: document.getElementById('turboStatusToast'),
+      gameLogToggleBtn: document.getElementById('gameLogToggleBtn')
     };
 
     const SUITS = [
@@ -111,6 +113,8 @@ const dom = {
 		const PLAYER_PURCHASES_SAVE_KEY = 'thirtyOnePlayerPurchases';
 		const PLAYER_AVATAR_STATS_SAVE_KEY = 'thirtyOneAvatarStats';
 		const PLAYER_GAME_STATS_SAVE_KEY = 'thirtyOneGameStats';
+		const GAME_LOG_VISIBLE_SAVE_KEY = 'thirtyOneGameLogVisible';
+		const GAME_LOG_TOGGLE_MAX_WIDTH = 1500;
 		const RESET_CONFIRM_TEXT = 'RESET MY GAME';
 		
 		const GAME_STAT_DEFAULTS = {
@@ -1903,6 +1907,46 @@ const dom = {
     function closeHelpModal() {
       dom.helpModal.classList.remove('show');
     }
+		
+/* <------------------------------------------------
+      GAME LOG TOGGLE SYSTEM
+   -------------------------------------------------> */
+  function isGameLogToggleAllowed() {
+    return window.innerWidth < GAME_LOG_TOGGLE_MAX_WIDTH;
+  }
+
+  function loadGameLogVisible() {
+    return localStorage.getItem(GAME_LOG_VISIBLE_SAVE_KEY) !== 'closed';
+  }
+
+  function saveGameLogVisible(isVisible) {
+    localStorage.setItem(
+      GAME_LOG_VISIBLE_SAVE_KEY,
+      isVisible ? 'open' : 'closed'
+    );
+  }
+
+  function applyGameLogVisibility() {
+    const toggleAllowed = isGameLogToggleAllowed();
+    const logVisible = toggleAllowed ? loadGameLogVisible() : true;
+
+    dom.app.classList.toggle('game-log-toggle-ready', toggleAllowed);
+    dom.app.classList.toggle('game-log-hidden', toggleAllowed && !logVisible);
+
+    dom.gameLogToggleBtn.textContent = logVisible ? '›' : '‹';
+    dom.gameLogToggleBtn.setAttribute(
+      'aria-label',
+      logVisible ? 'Hide Game Log' : 'Show Game Log'
+    );
+  }
+
+  function toggleGameLogVisibility() {
+    if (!isGameLogToggleAllowed()) return;
+
+    saveGameLogVisible(!loadGameLogVisible());
+    applyGameLogVisibility();
+    scaleGameToWindow();
+  }		
 
 /* <------------------------------------------------
       ACHIEVEMENTS WINDOW
@@ -2250,6 +2294,7 @@ const dom = {
     dom.storeBtn.addEventListener('click', openStoreModal);
     dom.helpBtn.addEventListener('click', openHelpModal);
     dom.achievementsBtn.addEventListener('click', openAchievementsModal);
+    dom.gameLogToggleBtn.addEventListener('click', toggleGameLogVisibility);		
     dom.closeOptionsBtn.addEventListener('click', closeOptionsModal);
     dom.closeStoreBtn.addEventListener('click', closeStoreModal);
     dom.closeHelpBtn.addEventListener('click', closeHelpModal);
@@ -2317,7 +2362,10 @@ const dom = {
       startRound();
     });
 
-    window.addEventListener('resize', scaleGameToWindow);
+    window.addEventListener('resize', () => {
+      applyGameLogVisibility();
+      scaleGameToWindow();
+    });
     window.addEventListener('keydown', event => {
       if (event.key.toLowerCase() === 'k') knock();
       if (event.key.toLowerCase() === 's') stand();
@@ -2355,6 +2403,7 @@ function scaleGameToWindow() {
     INITIAL RENDER
    -------------------------------------------------> */
     initializeSavedGameFlow();
+    applyGameLogVisibility();
     scaleGameToWindow();
 
 /* <------------------------------------------------
