@@ -255,6 +255,7 @@ Refreshing the browser restores progress automatically.
 ├── app.js
 ├── manifest.json
 ├── service-worker.js
+├── favicon.ico
 ├── README.md
 │
 ├── image/
@@ -265,7 +266,8 @@ Refreshing the browser restores progress automatically.
 │       ├── icon-512.png
 │       └── apple-touch-icon.png
 │
-└── audio/
+├── audio/
+│   └── 3knocks.mp3
 ```
 
 ---
@@ -317,10 +319,10 @@ Refreshing the browser restores progress automatically.
 
 # ❤️ Dedication
 
-Made with appreciation for family, friends, testers, and supporters who helped improve the project throughout development.
+For the family who loves this game and would like a little private time memories!
 
 ---
 
 # 📜 License
 
-This project is provided for personal and educational use unless otherwise specified.
+Tre Thacker ~ 2026
