@@ -10,7 +10,6 @@
       CHANGELOG
 			
 			Version 1.00 - Release
-				- Split into index.html, styles.css, and app.js.
    -------------------------------------------------> */
 
 /* <------------------------------------------------
@@ -1153,6 +1152,76 @@ body,
       color: var(--muted);
       margin: 0 0 16px;
     }
+
+/* <------------------------------------------------
+      ACHIEVEMENTS WINDOW
+   -------------------------------------------------> */
+		.achievements-modal-card {
+			position: relative;
+			width: min(340px, 100%);
+			padding: 14px;
+			border-width: 3px;
+		}
+
+		.achievements-modal-card h2 {
+			margin: 0 36px 10px 0;
+			font-size: 1.7rem;
+			line-height: 1;
+		}
+
+		.achievements-stats-grid {
+			display: grid;
+			gap: 8px;
+			max-height: 440px;
+			overflow-x: hidden;
+			overflow-y: auto;
+			padding-right: 4px;
+		}
+
+		.achievement-stat-row {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: 10px;
+			padding: 8px 10px;
+			border-radius: 12px;
+			background: rgba(0,0,0,0.24);
+			font-size: 1rem;
+			font-weight: 900;
+		}
+
+		.achievement-stat-value {
+			color: var(--accent);
+			font-weight: 1000;
+		}
+		
+		.achievement-stat-row.locked {
+			opacity: 0.45;
+			filter: grayscale(0.85);
+		}
+
+		.achievement-stat-description {
+			display: block;
+			margin-top: 3px;
+			color: var(--muted);
+			font-size: 0.75rem;
+			font-weight: 800;
+			line-height: 1.2;
+		}
+		
+/* <------------------------------------------------
+      ACHIEVEMENT SECTION HEADERS
+   -------------------------------------------------> */
+		.achievement-section-title {
+			margin-top: 8px;
+			margin-bottom: 2px;
+			padding: 4px 2px;
+			color: var(--accent);
+			font-size: 0.9rem;
+			font-weight: 1000;
+			letter-spacing: 0.08em;
+			text-align: center;
+			border-bottom: 1px solid rgba(255,255,255,0.18);
+		}		
 		
 /* <------------------------------------------------
       ROUND OVER WINDOW SIZE
@@ -1511,6 +1580,15 @@ body,
 
   .toast-knocked-word {
     color: var(--danger);
+  }
+	
+/* <------------------------------------------------
+      ACHIEVEMENT TOAST
+   -------------------------------------------------> */
+  .achievement-toast {
+    top: auto;
+    bottom: 100px;
+    border-color: var(--accent);
   }
 	
 /* <------------------------------------------------

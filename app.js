@@ -11,7 +11,6 @@ const APP_DEDICATION = '';
       CHANGELOG
 			
 			Version 1.00 - Release
-				- Split into index.html, styles.css, and app.js.
    -------------------------------------------------> */
 	 
 const dom = {
@@ -26,12 +25,16 @@ const dom = {
       optionsBtn: document.getElementById('optionsBtn'),
       helpBtn: document.getElementById('helpBtn'),
       storeBtn: document.getElementById('storeBtn'),
+      achievementsBtn: document.getElementById('achievementsBtn'),
       optionsModal: document.getElementById('optionsModal'),
       storeModal: document.getElementById('storeModal'),
       helpModal: document.getElementById('helpModal'),
       closeOptionsBtn: document.getElementById('closeOptionsBtn'),
       closeStoreBtn: document.getElementById('closeStoreBtn'),
       closeHelpBtn: document.getElementById('closeHelpBtn'),
+      achievementsModal: document.getElementById('achievementsModal'),
+      achievementsStatsGrid: document.getElementById('achievementsStatsGrid'),
+      closeAchievementsBtn: document.getElementById('closeAchievementsBtn'),
       storeHomeView: document.getElementById('storeHomeView'),
       storeGalleryView: document.getElementById('storeGalleryView'),
       storeGalleryTitle: document.getElementById('storeGalleryTitle'),
@@ -68,6 +71,7 @@ const dom = {
       revealGrid: document.getElementById('revealGrid'),
       nextRoundBtn: document.getElementById('nextRoundBtn'),
       toast: document.getElementById('toast'),
+      achievementToast: document.getElementById('achievementToast'),
       turboStatusToast: document.getElementById('turboStatusToast')
     };
 
@@ -106,7 +110,219 @@ const dom = {
 		const PLAYER_BACKGROUND_SAVE_KEY = 'thirtyOnePlayerBackground';
 		const PLAYER_PURCHASES_SAVE_KEY = 'thirtyOnePlayerPurchases';
 		const PLAYER_AVATAR_STATS_SAVE_KEY = 'thirtyOneAvatarStats';
+		const PLAYER_GAME_STATS_SAVE_KEY = 'thirtyOneGameStats';
 		const RESET_CONFIRM_TEXT = 'RESET MY GAME';
+		
+		const GAME_STAT_DEFAULTS = {
+		  gamesPlayed: 0,
+		  gamesWon: 0,
+		  roundsPlayed: 0,
+		  roundsWon: 0,
+		  knocks: 0,
+		  stands: 0,
+		  exactThirtyOnes: 0
+		};		
+		
+		const ACHIEVEMENT_DEFINITIONS = [
+		  {
+		    id: 'firstGame',
+		    title: 'First Game',
+		    description: 'Play your first game.',
+		    statName: 'gamesPlayed',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstRound',
+		    title: 'First Round',
+		    description: 'Play your first round.',
+		    statName: 'roundsPlayed',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstKnock',
+		    title: 'First Knock',
+		    description: 'Knock for the first time.',
+		    statName: 'knocks',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstStand',
+		    title: 'First Stand',
+		    description: 'Stand for the first time.',
+		    statName: 'stands',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstThirtyOne',
+		    title: 'Perfect 31',
+		    description: 'Score exactly 31.',
+		    statName: 'exactThirtyOnes',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstRoundWin',
+		    title: 'Round Winner',
+		    description: 'Win your first round.',
+		    statName: 'roundsWon',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstGameWin',
+		    title: 'Game Winner',
+		    description: 'Win your first game.',
+		    statName: 'gamesWon',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstImagePurchased',
+		    title: 'First Purchase',
+		    description: 'Purchase your first store image.',
+		    statSource: 'avatar',
+		    statName: 'imagesPurchased',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstAvatarChange',
+		    title: 'New Look',
+		    description: 'Change your player avatar for the first time.',
+		    statSource: 'avatar',
+		    statName: 'avatarChanges',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'firstBackgroundChange',
+		    title: 'Fresh Background',
+		    description: 'Change your player background for the first time.',
+		    statSource: 'avatar',
+		    statName: 'backgroundChanges',
+		    requiredValue: 1
+		  },
+		  {
+		    id: 'fiveRoundsPlayed',
+		    title: 'Getting Warmed Up',
+		    description: 'Complete 5 rounds.',
+		    statName: 'roundsPlayed',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'tenRoundsPlayed',
+		    title: 'Table Regular',
+		    description: 'Complete 10 rounds.',
+		    statName: 'roundsPlayed',
+		    requiredValue: 10
+		  },
+		  {
+		    id: 'fiveRoundWins',
+		    title: 'Round Streaker',
+		    description: 'Win 5 rounds.',
+		    statName: 'roundsWon',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'tenKnocks',
+		    title: 'Knock Master',
+		    description: 'Knock 10 times.',
+		    statName: 'knocks',
+		    requiredValue: 10
+		  },
+		  {
+		    id: 'fiveStands',
+		    title: 'Standing Strong',
+		    description: 'Stand 5 times.',
+		    statName: 'stands',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'fiveThirtyOnes',
+		    title: '31 Hunter',
+		    description: 'Score exactly 31 five times.',
+		    statName: 'exactThirtyOnes',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'threeGameWins',
+		    title: 'Game Champion',
+		    description: 'Win 3 games.',
+		    statName: 'gamesWon',
+		    requiredValue: 3
+		  },
+		  {
+		    id: 'fiveImagesPurchased',
+		    title: 'Collector',
+		    description: 'Purchase 5 store images.',
+		    statSource: 'avatar',
+		    statName: 'imagesPurchased',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'tenImagesPurchased',
+		    title: 'Big Spender',
+		    description: 'Purchase 10 store images.',
+		    statSource: 'avatar',
+		    statName: 'imagesPurchased',
+		    requiredValue: 10
+		  },
+		  {
+		    id: 'fiveAvatarChanges',
+		    title: 'Style Switcher',
+		    description: 'Change your player avatar 5 times.',
+		    statSource: 'avatar',
+		    statName: 'avatarChanges',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'fiveBackgroundChanges',
+		    title: 'Scene Setter',
+		    description: 'Change your player background 5 times.',
+		    statSource: 'avatar',
+		    statName: 'backgroundChanges',
+		    requiredValue: 5
+		  },
+		  {
+		    id: 'twentyRoundsPlayed',
+		    title: 'Card Shark',
+		    description: 'Complete 20 rounds.',
+		    statName: 'roundsPlayed',
+		    requiredValue: 20
+		  },
+		  {
+		    id: 'tenRoundWins',
+		    title: 'Round Legend',
+		    description: 'Win 10 rounds.',
+		    statName: 'roundsWon',
+		    requiredValue: 10
+		  },
+		  {
+		    id: 'twentyKnocks',
+		    title: 'Knocking Machine',
+		    description: 'Knock 20 times.',
+		    statName: 'knocks',
+		    requiredValue: 20
+		  },
+		  {
+		    id: 'tenStands',
+		    title: 'Stand Specialist',
+		    description: 'Stand 10 times.',
+		    statName: 'stands',
+		    requiredValue: 10
+		  },
+		  {
+		    id: 'tenThirtyOnes',
+		    title: '31 Master',
+		    description: 'Score exactly 31 ten times.',
+		    statName: 'exactThirtyOnes',
+		    requiredValue: 10
+		  },
+		  {
+		    id: 'fiveGameWins',
+		    title: 'Tournament Winner',
+		    description: 'Win 5 games.',
+		    statName: 'gamesWon',
+		    requiredValue: 5
+		  }
+		];
+
+		const DEFAULT_UNLOCKED_ACHIEVEMENTS = [];	
 		
 /* <------------------------------------------------
       AVATAR STORE IMAGE REGISTRY
@@ -510,8 +726,7 @@ const dom = {
     state.phase = 'playing';
     logMessage('New game started.');
     startRound();
-  }
-
+	}
     function createPlayer(name, isAI, seat, avatarId = DEFAULT_PLAYER_AVATAR_ID, backgroundId = 'back1') {
       return {
         name,
@@ -910,12 +1125,14 @@ const dom = {
         return;
       }
       currentPlayer().stood = true;
+      increaseGameStat('stands');
       logMessage(`${currentPlayer().name} stands.`);
       completeTurn();
     }
 
     function knock() {
       if (!humanCanAct() || state.hasDrawn || state.knocker !== null) return;
+      increaseGameStat('knocks');
       startKnock(HUMAN_INDEX);
       completeTurn(true);
     }
@@ -955,6 +1172,12 @@ const dom = {
     const player = state.players[i];
 
     if (!player.eliminated && scoreHand(player.hand).score === 31) {
+
+      if (i === HUMAN_INDEX) {
+        increaseGameStat('exactThirtyOnes');
+        increaseGameStat('roundsWon');
+      }
+
       state.gameBank += 3;
       renderBanks();
 
@@ -969,6 +1192,7 @@ const dom = {
     function endRound(reason, blitzWinner = null) {
       state.gameOver = true;
       state.phase = 'roundOver';
+      increaseGameStat('roundsPlayed');
       const active = activePlayers();
       const scores = active.map(player => ({ player, score: scoreHand(player.hand).score }));
       let roundText = reason;
@@ -1000,6 +1224,14 @@ const dom = {
         }
       }
 
+      if (
+        state.phase === 'roundOver' &&
+        !losers.includes(state.players[HUMAN_INDEX]) &&
+        !state.players[HUMAN_INDEX].eliminated
+      ) {
+        increaseGameStat('roundsWon');
+      }
+
       for (const player of state.players) {
 
         if (player.lives < 0) {
@@ -1014,8 +1246,10 @@ const dom = {
   if (remaining.length <= 1) {
     const winner = remaining[0];
     state.phase = 'gameOver';
+    increaseGameStat('gamesPlayed');
 
     if (winner && !winner.isAI) {
+    increaseGameStat('gamesWon');
     state.playerBank += state.gameBank;
     savePlayerBank(state.playerBank);
     roundText += ` ${winner.name} wins the game and collects ${state.gameBank} coins!`;
@@ -1421,12 +1655,154 @@ const dom = {
     function saveAvatarStats(stats) {
       localStorage.setItem(PLAYER_AVATAR_STATS_SAVE_KEY, JSON.stringify(stats));
     }
+		
+/* <------------------------------------------------
+      GAME STAT STORAGE
+   -------------------------------------------------> */
+    function loadGameStats() {
+      const savedStats = localStorage.getItem(PLAYER_GAME_STATS_SAVE_KEY);
+
+      if (!savedStats) {
+        return { ...GAME_STAT_DEFAULTS };
+      }
+
+      try {
+        const stats = JSON.parse(savedStats);
+
+        return {
+          ...GAME_STAT_DEFAULTS,
+          ...stats
+        };
+      } catch {
+        return { ...GAME_STAT_DEFAULTS };
+      }
+    }
+
+    function saveGameStats(stats) {
+      localStorage.setItem(
+        PLAYER_GAME_STATS_SAVE_KEY,
+        JSON.stringify(stats)
+      );
+    }
+
+    function increaseGameStat(statName, amount = 1) {
+      const stats = loadGameStats();
+
+      stats[statName] =
+        (Number(stats[statName]) || 0) + amount;
+
+      saveGameStats(stats);
+
+      checkAchievementUnlocks(statName);
+    }
+
+/* <------------------------------------------------
+      ACHIEVEMENT STORAGE
+   -------------------------------------------------> */
+    function loadUnlockedAchievements() {
+      const savedAchievements =
+        localStorage.getItem(PLAYER_ACHIEVEMENTS_SAVE_KEY);
+
+      if (!savedAchievements) {
+        return [...DEFAULT_UNLOCKED_ACHIEVEMENTS];
+      }
+
+      try {
+        const achievements = JSON.parse(savedAchievements);
+
+        if (!Array.isArray(achievements)) {
+          return [...DEFAULT_UNLOCKED_ACHIEVEMENTS];
+        }
+
+        return achievements.filter(
+          achievement => achievement !== 'New Player!'
+        );
+      } catch {
+        return [...DEFAULT_UNLOCKED_ACHIEVEMENTS];
+      }
+    }
+
+    function saveUnlockedAchievements(achievements) {
+      localStorage.setItem(
+        PLAYER_ACHIEVEMENTS_SAVE_KEY,
+        JSON.stringify(achievements)
+      );
+    }
+
+/* <------------------------------------------------
+      ACHIEVEMENT UNLOCK CHECKER
+   -------------------------------------------------> */
+    function checkAchievementUnlocks(changedStatName) {
+
+      const unlockedAchievements =
+        loadUnlockedAchievements();
+
+      const gameStats =
+        loadGameStats();
+			
+	    const avatarStats =
+        loadAvatarStats();		
+
+      let achievementUnlocked = false;
+
+      ACHIEVEMENT_DEFINITIONS.forEach(achievement => {
+
+        if (
+          unlockedAchievements.includes(
+            achievement.title
+          ) ||
+          achievement.statName !== changedStatName
+        ) {
+          return;
+        }
+
+        const statSource =
+          achievement.statSource === 'avatar'
+            ? avatarStats
+            : gameStats;
+
+        const currentValue =
+          Number(
+            statSource[
+              achievement.statName
+            ]
+          ) || 0;
+
+        if (
+          currentValue >=
+          achievement.requiredValue
+        ) {
+
+          unlockedAchievements.push(
+            achievement.title
+          );
+
+          achievementUnlocked = true;
+
+          achievementToast(
+            `🏆 ${achievement.title}`
+          );
+
+          logMessage(
+            `Achievement unlocked: 🏆 ${achievement.title}`
+          );
+        }
+
+      });
+
+      if (achievementUnlocked) {
+        saveUnlockedAchievements(
+          unlockedAchievements
+        );
+      }
+    }		
 
     function increaseAvatarStat(statName) {
       const stats = loadAvatarStats();
       stats[statName] = Number.isFinite(stats[statName]) ? stats[statName] + 1 : 1;
       saveAvatarStats(stats);
-    }		
+      checkAchievementUnlocks(statName);
+    }	
 		
     function purchaseStoreImage(imageId) {
       const allStoreImages = [...PLAYER_IMAGE_REGISTRY, ...BACKGROUND_IMAGE_REGISTRY];
@@ -1529,6 +1905,114 @@ const dom = {
     }
 
 /* <------------------------------------------------
+      ACHIEVEMENTS WINDOW
+   -------------------------------------------------> */
+    function renderAchievementStats() {
+      const avatarStats = loadAvatarStats();
+      const gameStats = loadGameStats();
+      const unlockedAchievements = loadUnlockedAchievements();
+
+      const achievementRows = ACHIEVEMENT_DEFINITIONS.map(achievement => {
+        const isUnlocked = unlockedAchievements.includes(achievement.title);
+
+        return `
+          <div class="achievement-stat-row ${isUnlocked ? '' : 'locked'}">
+            <span>
+              ${isUnlocked ? '🏆' : '🔒'} ${achievement.title}
+              <span class="achievement-stat-description">${achievement.description}</span>
+            </span>
+            <span class="achievement-stat-value">${isUnlocked ? 'Unlocked' : 'Locked'}</span>
+          </div>
+        `;
+      }).join('');
+
+      const unlockedAchievementCount = ACHIEVEMENT_DEFINITIONS.filter(
+        achievement => unlockedAchievements.includes(achievement.title)
+      ).length;
+
+      dom.achievementsStatsGrid.innerHTML = `
+        <div class="achievement-section-title">
+          TROPHIES
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Unlocked Trophies</span>
+          <span class="achievement-stat-value">${unlockedAchievementCount}/${ACHIEVEMENT_DEFINITIONS.length}</span>
+        </div>
+
+        ${achievementRows}
+
+        <div class="achievement-section-title">
+          GAMEPLAY STATS
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Games Played</span>
+          <span class="achievement-stat-value">${gameStats.gamesPlayed}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Games Won</span>
+          <span class="achievement-stat-value">${gameStats.gamesWon}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Rounds Played</span>
+          <span class="achievement-stat-value">${gameStats.roundsPlayed}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Rounds Won</span>
+          <span class="achievement-stat-value">${gameStats.roundsWon}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Knocks</span>
+          <span class="achievement-stat-value">${gameStats.knocks}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Stands</span>
+          <span class="achievement-stat-value">${gameStats.stands}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>31s Made</span>
+          <span class="achievement-stat-value">${gameStats.exactThirtyOnes}</span>
+        </div>
+
+        <div class="achievement-section-title">
+          STORE STATS
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Images Purchased</span>
+          <span class="achievement-stat-value">${avatarStats.imagesPurchased}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Avatar Changes</span>
+          <span class="achievement-stat-value">${avatarStats.avatarChanges}</span>
+        </div>
+
+        <div class="achievement-stat-row">
+          <span>Background Changes</span>
+          <span class="achievement-stat-value">${avatarStats.backgroundChanges}</span>
+        </div>
+      `;
+    }
+
+    function openAchievementsModal() {
+      renderAchievementStats();
+
+      dom.achievementsModal.classList.add('show');
+    }
+
+    function closeAchievementsModal() {
+      dom.achievementsModal.classList.remove('show');
+    }
+
+/* <------------------------------------------------
       RESET GAME SYSTEM
    -------------------------------------------------> */
   function openResetWarningModal() {
@@ -1562,7 +2046,7 @@ const dom = {
   }
 
   function saveDefaultFutureResetData() {
-    localStorage.setItem(PLAYER_ACHIEVEMENTS_SAVE_KEY, JSON.stringify(['New Player!']));
+    localStorage.setItem(PLAYER_ACHIEVEMENTS_SAVE_KEY, JSON.stringify([]));
     localStorage.setItem(PLAYER_ICON_SAVE_KEY, DEFAULT_PLAYER_AVATAR_ID);
     localStorage.setItem(PLAYER_BACKGROUND_SAVE_KEY, 'back1');
     localStorage.setItem(PLAYER_PURCHASES_SAVE_KEY, JSON.stringify([]));
@@ -1570,6 +2054,10 @@ const dom = {
       avatarChanges: 0,
       backgroundChanges: 0,
       imagesPurchased: 0
+    });
+
+    saveGameStats({
+      ...GAME_STAT_DEFAULTS
     });
   }
 
@@ -1597,6 +2085,7 @@ const dom = {
     state.players = createPlayersForNewGame('Player', 4, state.familyMode);
     state.phase = 'playing';
     state.log = [];
+    dom.logList.innerHTML = '';
     logMessage('Game reset to default state.');
     startRound();
   }
@@ -1709,6 +2198,15 @@ const dom = {
   }
 	
 /* <------------------------------------------------
+      ACHIEVEMENT TOAST
+   -------------------------------------------------> */
+  function achievementToast(message) {
+    dom.achievementToast.innerHTML = message;
+    dom.achievementToast.classList.add('show');
+    setTimeout(() => dom.achievementToast.classList.remove('show'), 1800);
+  }	
+	
+/* <------------------------------------------------
       TURBO MODE STATUS TOAST
    -------------------------------------------------> */
   function renderTurboStatusToast() {
@@ -1751,9 +2249,11 @@ const dom = {
     dom.optionsBtn.addEventListener('click', openOptionsModal);
     dom.storeBtn.addEventListener('click', openStoreModal);
     dom.helpBtn.addEventListener('click', openHelpModal);
+    dom.achievementsBtn.addEventListener('click', openAchievementsModal);
     dom.closeOptionsBtn.addEventListener('click', closeOptionsModal);
     dom.closeStoreBtn.addEventListener('click', closeStoreModal);
     dom.closeHelpBtn.addEventListener('click', closeHelpModal);
+    dom.closeAchievementsBtn.addEventListener('click', closeAchievementsModal);
     dom.openCharacterStoreBtn.addEventListener('click', () => showStoreGalleryView('Characters', 'players'));
     dom.openBackgroundStoreBtn.addEventListener('click', () => showStoreGalleryView('Backgrounds', 'backgrounds'));
     dom.storeBackBtn.addEventListener('click', showStoreHomeView);
@@ -1761,23 +2261,28 @@ const dom = {
       const tile = event.target.closest('.store-tile');
       if (!tile) return;
 
-      if (tile.classList.contains('locked') && !purchaseStoreImage(tile.dataset.storeImageId)) {
+      const imageId = tile.dataset.storeImageId;
+      const imageType = dom.storeGalleryTitle.textContent === 'Backgrounds'
+        ? 'backgrounds'
+        : 'players';
+
+      if (!purchaseStoreImage(imageId)) {
         return;
       }
 
-      if (dom.storeGalleryTitle.textContent === 'Backgrounds') {
-        saveSelectedPlayerBackground(tile.dataset.storeImageId);
+      if (imageType === 'backgrounds') {
+        saveSelectedPlayerBackground(imageId);
         resolveAIAvatarDuplicatesAfterHumanChange();
         renderStoreGallery('backgrounds');
         render();
         return;
       }
 
-      saveSelectedPlayerIcon(tile.dataset.storeImageId);
+      saveSelectedPlayerIcon(imageId);
       resolveAIAvatarDuplicatesAfterHumanChange();
       renderStoreGallery('players');
       render();
-		});	
+    });	
     dom.resetGameBtn.addEventListener('click', openResetWarningModal);
     dom.resetWarningContinueBtn.addEventListener('click', openResetFinalModal);
     dom.resetWarningCancelBtn.addEventListener('click', cancelResetGame);
@@ -1842,3 +2347,14 @@ const dom = {
    -------------------------------------------------> */
     initializeSavedGameFlow();
     scaleGameToWindow();
+
+/* <------------------------------------------------
+      SERVICE WORKER REGISTRATION
+   -------------------------------------------------> */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+    }
+		
+		

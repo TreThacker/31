@@ -10,7 +10,6 @@ Dedication: None
 			CHANGELOG
 			
 			Version 1.00 - Release
-				- Split into index.html, styles.css, and app.js.
 		 ------------------------------------------------->
 
 <html lang="en">
@@ -19,6 +18,9 @@ Dedication: None
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>31 Card Game - Player vs 3 AI</title>
   <link rel="stylesheet" href="styles.css" />
+	<link rel="manifest" href="manifest.json">
+	<link rel="icon" href="favicon.ico">
+	<link rel="apple-touch-icon" sizes="180x180" href="image/icon/apple-touch-icon.png">
   <script src="app.js" defer></script>
 </head>
 <body class="theme-classic">
@@ -64,9 +66,11 @@ Dedication: None
 							<button id="helpBtn" class="secondary icon-btn" aria-label="Open Help" title="Help">?</button>
 							<button id="optionsBtn" class="secondary icon-btn" aria-label="Open Options" title="Options">⚙</button>
 							<button id="storeBtn" class="secondary icon-btn" aria-label="Open Store" title="Store">🛒</button>
+							<button id="achievementsBtn" class="secondary icon-btn" aria-label="Open Achievements" title="Achievements">🏆</button>
 						</div>
 
 						<div id="toast" class="toast"></div>
+						<div id="achievementToast" class="toast achievement-toast"></div>
 						<div id="turboStatusToast" class="turbo-status-toast"></div>
 					</section>
 
@@ -124,6 +128,14 @@ Dedication: None
 				</div>
 			</div>
 
+			<div id="achievementsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="achievementsTitle">
+				<div class="modal-card achievements-modal-card">
+					<button id="closeAchievementsBtn" class="modal-close-x" aria-label="Close Achievements">×</button>
+					<h2 id="achievementsTitle">Achievements</h2>
+					<div id="achievementsStatsGrid" class="achievements-stats-grid"></div>
+				</div>
+			</div>
+
 			<div id="helpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
 				<div class="modal-card">
 					<h2 id="helpTitle">Help</h2>
@@ -136,6 +148,9 @@ Dedication: None
 							<li>Exactly 31 ends the round immediately.</li>
 							<li>After a knock, everyone else gets one final turn.</li>
 							<li>Lowest hand loses 1 coin. Failed knocker loses 2 coins.</li>
+							<li>Use the Store button to buy and change player avatars and backgrounds.</li>
+							<li>Use the Trophy button to view achievements and gameplay statistics.</li>
+							<li>Use Reset Game only when you want to erase bank, purchases, trophies, and saved progress.</li>							
 						</ul>
 					</div>
 					<button id="closeHelpBtn" class="secondary">Close</button>
