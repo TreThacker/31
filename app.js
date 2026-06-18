@@ -61,6 +61,7 @@ const dom = {
       stockCount: document.getElementById('stockCount'),
       logList: document.getElementById('logList'),
       tableActions: document.querySelector('.table-actions'),
+			tableWrap: document.querySelector('.table-wrap'),
       standBtn: document.getElementById('standBtn'),
 			bankPlayerTitle: document.getElementById('bankPlayerTitle'),
 			playerBankAmount: document.getElementById('playerBankAmount'),
@@ -2377,23 +2378,23 @@ const dom = {
       GAME AUTO SCALE SYSTEM
    -------------------------------------------------> */
 function scaleGameToWindow() {
-  const baseWidth = dom.app.offsetWidth;
   const availableWidth = window.innerWidth;
   const availableHeight = window.innerHeight;
   const gameLogHidden = dom.app.classList.contains('game-log-hidden');
 
-  dom.app.style.removeProperty('--game-log-hidden-table-height');
+  dom.tableWrap.style.removeProperty('height');
+  dom.tableWrap.style.removeProperty('min-height');
+
+  const baseWidth = dom.app.offsetWidth;
+  const widthScale = availableWidth / baseWidth;
 
   if (gameLogHidden) {
-    const widthScale = availableWidth / baseWidth;
-    const targetAppHeight = availableHeight / widthScale;
     const appVerticalPadding = 36;
-    const targetTableHeight = Math.max(740, targetAppHeight - appVerticalPadding);
+    const targetTableHeight =
+      Math.max(740, (availableHeight / widthScale) - appVerticalPadding);
 
-    dom.app.style.setProperty(
-      '--game-log-hidden-table-height',
-      `${targetTableHeight}px`
-    );
+    dom.tableWrap.style.minHeight = `${targetTableHeight}px`;
+    dom.tableWrap.style.height = `${targetTableHeight}px`;
   }
 
   const baseHeight = dom.app.offsetHeight;
