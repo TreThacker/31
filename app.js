@@ -2383,33 +2383,20 @@ function scaleGameToWindow() {
   const availableWidth = window.innerWidth;
   const availableHeight = window.innerHeight;
 
-  const gameLogHidden = dom.app.classList.contains('game-log-hidden');
-
-  if (gameLogHidden) {
-    const scaleX = availableWidth / baseWidth;
-    const scaleY = availableHeight / baseHeight;
-
-    dom.gameScaleInner.style.width = `${baseWidth}px`;
-    dom.gameScaleInner.style.transform =
-      `scale(${scaleX}, ${scaleY})`;
-
-    dom.gameScaleFrame.style.height =
-      `${window.innerHeight}px`;
-
-    return;
-  }
-
   const scale = Math.min(
     availableWidth / baseWidth,
     availableHeight / baseHeight
   );
 
   const scaledWidth = baseWidth * scale;
+  const scaledHeight = baseHeight * scale;
+
   const offsetX = (availableWidth - scaledWidth) / 2;
+  const offsetY = (availableHeight - scaledHeight) / 2;
 
   dom.gameScaleInner.style.width = `${baseWidth}px`;
   dom.gameScaleInner.style.transform =
-    `translateX(${offsetX}px) scale(${scale})`;
+    `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
 
   dom.gameScaleFrame.style.height =
     `${window.innerHeight}px`;
