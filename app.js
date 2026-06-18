@@ -2377,26 +2377,39 @@ const dom = {
       GAME AUTO SCALE SYSTEM
    -------------------------------------------------> */
 function scaleGameToWindow() {
-  const baseWidth = 1440;
-  const baseHeight = dom.gameScaleInner.scrollHeight;
+  const baseWidth = dom.app.offsetWidth;
+  const baseHeight = dom.app.offsetHeight;
 
   const availableWidth = window.innerWidth;
   const availableHeight = window.innerHeight;
 
-  const widthScale = availableWidth / baseWidth;
-  const heightScale = availableHeight / baseHeight;
+  const gameLogHidden = dom.app.classList.contains('game-log-hidden');
 
-  const scale = Math.min(widthScale, heightScale);
+  if (gameLogHidden) {
+    const scaleX = availableWidth / baseWidth;
+    const scaleY = availableHeight / baseHeight;
+
+    dom.gameScaleInner.style.width = `${baseWidth}px`;
+    dom.gameScaleInner.style.transform =
+      `scale(${scaleX}, ${scaleY})`;
+
+    dom.gameScaleFrame.style.height =
+      `${window.innerHeight}px`;
+
+    return;
+  }
+
+  const scale = Math.min(
+    availableWidth / baseWidth,
+    availableHeight / baseHeight
+  );
 
   const scaledWidth = baseWidth * scale;
-  const scaledHeight = baseHeight * scale;
-
   const offsetX = (availableWidth - scaledWidth) / 2;
-  const offsetY = (availableHeight - scaledHeight) / 2;
 
   dom.gameScaleInner.style.width = `${baseWidth}px`;
   dom.gameScaleInner.style.transform =
-    `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+    `translateX(${offsetX}px) scale(${scale})`;
 
   dom.gameScaleFrame.style.height =
     `${window.innerHeight}px`;
