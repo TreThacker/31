@@ -2378,10 +2378,25 @@ const dom = {
    -------------------------------------------------> */
 function scaleGameToWindow() {
   const baseWidth = dom.app.offsetWidth;
-  const baseHeight = dom.app.offsetHeight;
-
   const availableWidth = window.innerWidth;
   const availableHeight = window.innerHeight;
+  const gameLogHidden = dom.app.classList.contains('game-log-hidden');
+
+  dom.app.style.removeProperty('--game-log-hidden-table-height');
+
+  if (gameLogHidden) {
+    const widthScale = availableWidth / baseWidth;
+    const targetAppHeight = availableHeight / widthScale;
+    const appVerticalPadding = 36;
+    const targetTableHeight = Math.max(740, targetAppHeight - appVerticalPadding);
+
+    dom.app.style.setProperty(
+      '--game-log-hidden-table-height',
+      `${targetTableHeight}px`
+    );
+  }
+
+  const baseHeight = dom.app.offsetHeight;
 
   const scale = Math.min(
     availableWidth / baseWidth,
